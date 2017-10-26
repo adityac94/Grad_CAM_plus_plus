@@ -1,0 +1,220 @@
+import numpy as np
+import tensorflow as tf
+import GuideReLU as GReLU
+import models.vgg16 as vgg16
+import models.vgg_utils as vgg_utils
+from skimage.transform import resize
+import matplotlib.pyplot as plt
+import os
+from scipy.misc import imread, imresize
+import tensorflow as tf
+from tensorflow.python.framework import graph_util
+
+def guided_BP(image, label_id = -1):	
+	g = tf.get_default_graph()
+	with g.gradient_override_map({'Relu': 'GuidedRelu'}):
+		label_vector = tf.placeholder("float", [None, 1000])
+		input_image = tf.placeholder("float", [None, 224, 224, 3])
+
+		vgg = vgg16.Vgg16()
+		with tf.name_scope("content_vgg"):
+		    vgg.build(input_image)
+
+		cost = vgg.fc8*label_vector
+	
+		# Guided backpropagtion back to input layer
+		gb_grad = tf.gradients(cost, input_image)[0]
+
+		init = tf.global_variables_initializer()
+	
+	# Run tensorflow 
+	with tf.Session(graph=g) as sess:    
+		sess.run(init)
+		output = [0.0]*vgg.prob.get_shape().as_list()[1] #one-hot embedding for desired class activations
+		if label_id == -1:
+			prob = sess.run(vgg.prob, feed_dict={input_image:image})
+		
+			vgg_utils.print_prob(prob[0], './synset.txt')
+
+			#creating the output vector for the respective class
+			index = np.argmax(prob)
+			print "Predicted_class: ", index
+			output[index] = 1.0
+
+		else:
+			output[label_id] = 1.0
+		output = np.array(output)
+		gb_grad_value = sess.run(gb_grad, feed_dict={input_image:image, label_vector: output.reshape((1,-1))})
+
+	return gb_grad_value[0] 
+
+def grad_CAM(image, label_id = -1):
+		g = tf.get_default_graph()
+		init = tf.global_variables_initializer()
+		# Run tensorflow 
+		sess = tf.Session()
+
+		label_vector = tf.placeholder("float", [None, 1000])
+		input_image = tf.placeholder("float", [1, 224, 224, 3])
+		label_index = tf.placeholder("int64", ())
+
+		vgg = vgg16.Vgg16()
+		with tf.name_scope("content_vgg"):
+		    vgg.build(input_image)
+		#prob = tf.placeholder("float", [None, 1000])
+	
+		cost = vgg.prob*label_vector
+
+		# Get last convolutional layer gradients for generating gradCAM visualization
+		target_conv_layer = vgg.conv5_3
+		target_conv_layer_grad = tf.gradients(cost, target_conv_layer)[0]
+	
+		#second_derivative
+		temp_1 = target_conv_layer_grad*(target_conv_layer_grad/vgg.prob[0][label_index])		
+		
+		#Calculating the gradient of every node in the softmax layer with the feature map  
+		total = tf.zeros_like(target_conv_layer)
+		S_double_derivatives_j = []
+		y_gradients_list = []
+		for j in range(1000):
+			j_output = np.zeros([1000,])
+			j_output[j] = 1.0
+			output_tensor_j = tf.constant(j_output, dtype=tf.float32)
+			
+  			y_gradients_j = tf.gradients(vgg.fc8*output_tensor_j, target_conv_layer)[0]
+			S_gradients_j = tf.gradients(vgg.prob*output_tensor_j, target_conv_layer)[0]
+
+			y_gradients_list.append(y_gradients_j)
+
+			total = total + S_gradients_j*y_gradients_j
+
+			prob_output_j = vgg.prob[0][j]
+			temp_1_mini = S_gradients_j*(S_gradients_j/prob_output_j)
+  			
+			S_double_derivatives_j.append(temp_1_mini)
+		
+		S_double_derivatives_j_part_one = tf.stack(S_double_derivatives_j)
+  		temp_2 = total*vgg.prob[0][label_index]
+		second_derivative = temp_1 - temp_2
+		
+		#third_derivative
+		double_temp_1 = second_derivative*(target_conv_layer_grad/vgg.prob[0][label_index])
+  		double_temp_2 = total*target_conv_layer_grad
+		
+		temp_array = []
+		for j in range(1000):
+			prob_output_j = vgg.prob[0][j]
+			temp_2_mini = total*prob_output_j
+			temp_array.append(temp_2_mini)
+
+		S_double_derivatives_j_part_two = tf.stack(temp_array)
+		S_double_derivatives = S_double_derivatives_j_part_one - S_double_derivatives_j_part_two
+		
+		total_2 = tf.reduce_sum(S_double_derivatives*tf.stack(y_gradients_list),axis=0)
+		
+		double_temp_3 = total_2*vgg.prob[0][label_index]
+
+		triple_derivative = double_temp_1 - double_temp_2*2.0 - double_temp_3  
+		sess.run(init)
+		f = open("scores.txt","w")
+		for filename in sorted(os.listdir("../../imagenet_val/")):
+			print filename
+			
+			img1 = vgg_utils.load_image("../../imagenet_val/" + filename)
+			
+			output = [0.0]*vgg.prob.get_shape().as_list()[1] #one-hot embedding for desired class activations
+			#creating the output vector for the respective class
+			
+			try:
+				prob_val = sess.run(vgg.prob, feed_dict={input_image:[img1]})
+			except:
+				print "oops"
+				continue
+	
+			vgg_utils.print_prob(prob_val[0], './synset.txt')
+
+			#creating the output vector for the respective class
+			index = np.argmax(prob_val)
+			orig_score = prob_val[0][index]
+			print "Predicted_class: ", index
+			output[index] = 1.0
+			label_id = index
+			output = np.array(output)
+			
+			
+			conv_output, conv_first_grad, conv_second_grad, conv_third_grad = sess.run([target_conv_layer, target_conv_layer_grad, second_derivative, triple_derivative], feed_dict={input_image:[img1], label_index:label_id, label_vector: output.reshape((1,-1))})
+			
+			global_sum = np.sum(conv_output[0].reshape((-1,512)), axis=0)
+		
+			alpha_num = conv_second_grad[0]
+			alpha_denom = conv_second_grad[0]*2.0 + conv_third_grad[0]*global_sum.reshape((1,1,512))
+			alpha_denom = np.where(alpha_denom != 0.0, alpha_denom, np.ones(alpha_denom.shape))
+			alphas = alpha_num/alpha_denom
+		
+			weights = np.maximum(conv_first_grad[0], 0.0)
+			#normalizing the alphas
+			
+			alpha_normalization_constant = np.sum(np.sum(alphas, axis=0),axis=0)
+			
+			alphas /= alpha_normalization_constant.reshape((1,1,512))
+			
+
+			deep_linearization_weights = np.sum((weights*alphas).reshape((-1,512)),axis=0)
+			#print deep_linearization_weights
+			grad_CAM_map = np.sum(deep_linearization_weights*conv_output[0], axis=2)
+	
+			# Passing through ReLU
+			cam = np.maximum(grad_CAM_map, 0)
+			cam = cam / np.max(cam) # scale 0 to 1.0   
+		
+			cam = resize(cam, (224,224))
+			# Passing through ReLU
+			cam = np.maximum(grad_CAM_map, 0)
+			cam = cam / np.max(cam) # scale 0 to 1.0    
+			cam = resize(cam, (224,224))
+			visualize(img1, cam, filename) 
+
+
+			#keeping the important saliency parts in original image
+			gd_img = img1*cam.reshape((224,224,1))
+			gd_img -= np.min(gd_img)
+			gd_img /= gd_img.max()
+
+			new_prob = sess.run(vgg.prob, feed_dict={input_image:[gd_img]})
+			f.write(str(orig_score) + " " + str(new_prob[0][index]) + "\n")
+			
+		# print(cam)
+		return cam
+
+def visualize(img, cam, filename): 
+    """gb_viz = np.dstack((
+            gb_viz[:, :, 2],
+            gb_viz[:, :, 1],
+            gb_viz[:, :, 0],
+        ))
+    
+    gb_viz -= np.min(gb_viz)
+    gb_viz /= gb_viz.max()"""
+       
+    fig, ax = plt.subplots(nrows=1,ncols=2)
+    
+    plt.subplot(121)
+    imgplot = plt.imshow(img)
+    
+    
+    plt.subplot(122)
+    gd_img = img*cam.reshape((224,224,1))
+    gd_img -= np.min(gd_img)
+    gd_img /= gd_img.max()
+    imgplot = plt.imshow(gd_img)
+
+ 
+    """gd_gb = gb_viz*cam.reshape((224,224,1))
+    gd_gb -= np.min(gd_gb)
+    gd_gb /= gd_gb.max()
+   
+    plt.subplot(224)
+    imgplot = plt.imshow(gd_gb)"""
+
+    plt.savefig("output/" + filename + ".png")
+    plt.close(fig)
