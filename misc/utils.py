@@ -48,7 +48,7 @@ def guided_BP(image, label_id = -1):
 
 	return gb_grad_value[0] 
 
-def grad_CAM_plus(filename, label_id = -1):
+def grad_CAM_plus(filename, label_id, output_filename):
 	g = tf.get_default_graph()
 	init = tf.global_variables_initializer()
 	
@@ -84,7 +84,7 @@ def grad_CAM_plus(filename, label_id = -1):
 
 	sess.run(init)
 
-	img1 = vgg_utils.load_image("./images/" + filename)
+	img1 = vgg_utils.load_image(filename)
 		
 	output = [0.0]*vgg.prob.get_shape().as_list()[1] #one-hot embedding for desired class activations
 		#creating the output vector for the respective class
@@ -101,7 +101,7 @@ def grad_CAM_plus(filename, label_id = -1):
 	else:
 		output[label_id] = 1.0	
 	output = np.array(output)
-
+	print label_id
 	conv_output, conv_first_grad, conv_second_grad, conv_third_grad = sess.run([target_conv_layer, first_derivative, second_derivative, triple_derivative], feed_dict={input_image:[img1], label_index:label_id, label_vector: output.reshape((1,-1))})
 	
 	global_sum = np.sum(conv_output[0].reshape((-1,conv_first_grad[0].shape[2])), axis=0)
@@ -134,7 +134,7 @@ def grad_CAM_plus(filename, label_id = -1):
 
 
 	gb = guided_BP([img1], label_id)
-	visualize(img1, cam, filename, gb) 
+	visualize(img1, cam, output_filename, gb) 
 	return cam
 
 def visualize(img, cam, filename,gb_viz):
