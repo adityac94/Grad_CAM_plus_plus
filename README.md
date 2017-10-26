@@ -1,2 +1,2 @@
-# Grad_CAM_plut_plut
+# Grad_CAM++
 A generalized gradient-based CNN visualization technique
