@@ -1,4 +1,4 @@
-# Grad-CAM++
+# Grad-CAM++ [WACV 2018]
 A generalized gradient-based CNN visualization technique
 
 Kindly download the pretrained weights of the vgg16 network (vgg16.npy) from the following link, and copy the file to the `models/` subdirectory.
