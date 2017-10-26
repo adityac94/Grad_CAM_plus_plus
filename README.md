@@ -12,11 +12,11 @@ https://drive.google.com/drive/folders/0BzS5KZjihEdyUjBHcGFNRnk4bFU?usp=sharing
 -`f`: path to input image
 -`gpu`: the gpu id to use, 0-indexed
 -`l`: class label, default is -1 (chooses the class predicted by the model)
--`o`: Specify output file name for Grad-CAM++ visualization, default is `output.jpeg`. All results would be saved in the output/ subdirectory.
+-`o`: Specify output file name for Grad-CAM++ visualization, default is `output.jpeg`. All results would be saved in the `output/` subdirectory.
 
 
 
-#### FOR HELP:
+#### For Help:
 ```python classify.py -h ```
 
 
