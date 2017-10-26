@@ -15,8 +15,7 @@ https://drive.google.com/drive/folders/0BzS5KZjihEdyUjBHcGFNRnk4bFU?usp=sharing
 
 
 #### FOR HELP:
-````python classify.py -h 
-```
+```python classify.py -h ```
 
 The above code is for the vgg16 network, pre-trained on imagenet.  
 We tested our code on tensorflow 1.3, compatibility with other versions is not guaranteed.
