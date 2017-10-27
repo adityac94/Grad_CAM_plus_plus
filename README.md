@@ -27,8 +27,7 @@ We tested our code on tensorflow 1.3, compatibility with other versions is not g
 Parts of the code have been borrowed and modified from: 
 ##### For the Grad-CAM tensorflow implementation
 https://github.com/Ankush96/grad-cam.tensorflow  
-https://github.com/insikk/Grad-CAM-tensorflow
-
+https://github.com/insikk/Grad-CAM-tensorflow  
 ##### For porting pre-trained vgg16-model from caffe model zoo to tensorflow
 https://github.com/ry/tensorflow-vgg16  
 
