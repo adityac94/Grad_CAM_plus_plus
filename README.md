@@ -1,6 +1,7 @@
-# Grad-CAM++ [WACV 2018]: A Tensorflow Implementation
+# Grad-CAM++ [WACV 2018]
 A generalized gradient-based CNN visualization technique
 
+Implementation in python using tensorflow 1.3.  
 Kindly download the pretrained weights of the vgg16 network (vgg16.npy) from the following link, and copy the file to the `models/` subdirectory.  
 https://drive.google.com/drive/folders/0BzS5KZjihEdyUjBHcGFNRnk4bFU?usp=sharing
 
