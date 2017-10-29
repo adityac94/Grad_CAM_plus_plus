@@ -28,7 +28,7 @@ The above code is for the vgg16 network, pre-trained on imagenet.
 We tested our code on tensorflow 1.3, compatibility with other versions is not guaranteed.
 
 ###### Deficiencies with present grad-cam
-![alt text](images/faults-grad-cam.png)
+![alt text](images/grad-cam-faults.png)
 
 #### Acknowledgements
 Parts of the code have been borrowed and modified from: 
