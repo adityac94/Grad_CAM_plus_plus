@@ -1,7 +1,7 @@
 # Grad-CAM++ [WACV 2018]
 A generalized gradient-based CNN visualization technique
 code for the paper:
-# Grad-CAM++: Generalized Gradient-based Visual Explanations for Deep Convolutional Networks
+### Grad-CAM++: Generalized Gradient-based Visual Explanations for Deep Convolutional Networks
 ![alt text](images/architecture.png)
 
 Implementation in python using tensorflow 1.3.  
