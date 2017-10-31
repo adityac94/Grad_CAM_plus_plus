@@ -4,7 +4,7 @@ A generalized gradient-based CNN visualization technique
 code for the paper:
 ### Grad-CAM++: Generalized Gradient-based Visual Explanations for Deep Convolutional Networks
 
-To be presented at **WACV 2018**
+To be presented at **WACV 2018**,
 Authors:
 <br>
 Aditya Chattopadhyay\*,
@@ -14,7 +14,11 @@ Vineeth N Balasubramanian,
 <br>
 (\* equal contribution)
 <br>
+##### Gradcam++ Architecture
 ![alt text](images/architecture.png)
+##### Performance of grad-cam++ with respect to grad-cam
+![alt text](images/grad-campp.png)
+Above we do a comparision of the performance of gradcam++ with respect to grad-cam. Gradcam++ does a better image localization that Gradcam, not only in scenarios where there is more than one object of same class in an image, but also in cases where  there is a single object in an image. 
 
 Implementation in python using tensorflow 1.3.  
 Kindly download the pretrained weights of the vgg16 network (vgg16.npy) from the following link, and copy the file to the `models/` subdirectory.  
@@ -39,9 +43,7 @@ https://drive.google.com/drive/folders/0BzS5KZjihEdyUjBHcGFNRnk4bFU?usp=sharing
 The above code is for the vgg16 network, pre-trained on imagenet.  
 We tested our code on tensorflow 1.3, compatibility with other versions is not guaranteed.
 
-##### Weakness with present grad-cam
-![alt text](images/grad-cam-faults.png)
-We found weakness in Grad-Cam where for images with multiple instances of same class, not all instances were localized in the heatmap. Moreover in some instances with images of single object the localization was not proper 
+
 
 #### Acknowledgements
 Parts of the code have been borrowed and modified from: 
