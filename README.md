@@ -3,11 +3,12 @@
 A generalized gradient-based CNN visualization technique
 code for the paper:
 ### Grad-CAM++: Generalized Gradient-based Visual Explanations for Deep Convolutional Networks
-Authors: Aditya Chattopadhay, Anirban Sarkar, Prantik Howlader, Vineeth N Balasubramanian
+
 To be presented at **WACV 2018**
+Authors:
 <br>
-Aditya Chattopadhyay\*,
-Anirban Sarkar\*,
+Aditya Chattopadhyay\*,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Anirban Sarkar\*,
+
 Prantik Howlader\*,
 Vineeth N Balasubramanian,
 <br>
