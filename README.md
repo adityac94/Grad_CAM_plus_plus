@@ -7,8 +7,8 @@ code for the paper:
 To be presented at **WACV 2018**
 Authors:
 <br>
-Aditya Chattopadhyay\*,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Anirban Sarkar\*,
-
+Aditya Chattopadhyay\*,
+Anirban Sarkar\*,
 Prantik Howlader\*,
 Vineeth N Balasubramanian,
 <br>
