@@ -10,7 +10,7 @@ Authors:
 <br>
 Aditya Chattopadhyay\*,
 Anirban Sarkar\*,
-Prantik Howlader\*,
+Prantik Howlader\* and
 Vineeth N Balasubramanian,
 <br>
 (\* equal contribution)
