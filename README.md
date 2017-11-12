@@ -54,7 +54,7 @@ https://github.com/insikk/Grad-CAM-tensorflow
 ##### For porting pre-trained vgg16-model from caffe model zoo to tensorflow
 https://github.com/ry/tensorflow-vgg16  
 
-If using this code, please cite our work:
+#### If using this code, please cite our work:
 Chattopadhyay, A., Sarkar, A., Howlader, P. and Balasubramanian, V.N., 2017. Grad-CAM++: Generalized Gradient-based Visual Explanations for Deep Convolutional Networks. arXiv preprint arXiv:1710.11063.
 **Bibtex**: @article{chattopadhyay2017grad,
   title={Grad-CAM++: Generalized Gradient-based Visual Explanations for Deep Convolutional Networks},
