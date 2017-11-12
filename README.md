@@ -58,7 +58,7 @@ https://github.com/ry/tensorflow-vgg16
 <br>
 Chattopadhyay, A., Sarkar, A., Howlader, P. and Balasubramanian, V.N., 2017. Grad-CAM++: Generalized Gradient-based Visual Explanations for Deep Convolutional Networks. arXiv preprint arXiv:1710.11063.
 <br>
-**Bibtex**: @article{chattopadhyay2017grad,
+Bibtex: @article{chattopadhyay2017grad,
   title={Grad-CAM++: Generalized Gradient-based Visual Explanations for Deep Convolutional Networks},
   author={Chattopadhyay, Aditya and Sarkar, Anirban and Howlader, Prantik and Balasubramanian, Vineeth N},
   journal={arXiv preprint arXiv:1710.11063},
