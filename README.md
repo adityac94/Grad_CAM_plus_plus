@@ -64,6 +64,6 @@ Chattopadhyay, A., Sarkar, A., Howlader, P. and Balasubramanian, V.N., 2017. Gra
   journal={arXiv preprint arXiv:1710.11063},
   year={2017}
 }
-<br>
+
 
 P.S. Currently our work only supports classification probems with CNN, we plan to soon include support for Image Captionin, VQA and other such CNN based architectures.
