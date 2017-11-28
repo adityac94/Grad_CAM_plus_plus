@@ -55,15 +55,12 @@ https://github.com/insikk/Grad-CAM-tensorflow
 https://github.com/ry/tensorflow-vgg16  
 
 #### If using this code, please cite our work:
-<br>
-Chattopadhyay, A., Sarkar, A., Howlader, P. and Balasubramanian, V.N., 2017. Grad-CAM++: Generalized Gradient-based Visual Explanations for Deep Convolutional Networks. arXiv preprint arXiv:1710.11063.
-<br>
-Bibtex: @article{chattopadhyay2017grad,
+```
+ @article{chattopadhyay2017grad,
   title={Grad-CAM++: Generalized Gradient-based Visual Explanations for Deep Convolutional Networks},
   author={Chattopadhyay, Aditya and Sarkar, Anirban and Howlader, Prantik and Balasubramanian, Vineeth N},
   journal={arXiv preprint arXiv:1710.11063},
   year={2017}
 }
-
-
+```
 P.S. Currently our work only supports classification probems with CNN, we plan to soon include support for Image Captionin, VQA and other such CNN based architectures.
