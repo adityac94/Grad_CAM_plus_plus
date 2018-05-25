@@ -113,10 +113,21 @@ def grad_CAM_plus(filename, label_id, output_filename):
 
 	weights = np.maximum(conv_first_grad[0], 0.0)
 	#normalizing the alphas
-	
+	"""	
 	alpha_normalization_constant = np.sum(np.sum(alphas, axis=0),axis=0)
 	
 	alphas /= alpha_normalization_constant.reshape((1,1,conv_first_grad[0].shape[2]))
+	"""
+
+	alphas_thresholding = np.where(weights, alphas, 0.0)
+
+        alpha_normalization_constant = np.sum(np.sum(alphas_thresholding, axis=0),axis=0)
+        alpha_normalization_constant_processed = np.where(alpha_normalization_constant != 0.0, alpha_normalization_constant, np.ones(alpha_normalization_constant.shape))
+
+
+        alphas /= alpha_normalization_constant_processed.reshape((1,1,conv_first_grad[0].shape[2]))
+
+
 	
 	deep_linearization_weights = np.sum((weights*alphas).reshape((-1,conv_first_grad[0].shape[2])),axis=0)
 	#print deep_linearization_weights
@@ -149,11 +160,11 @@ def visualize(img, cam, filename,gb_viz):
   
     fig, ax = plt.subplots(nrows=1,ncols=3)
 
-    plt.subplot(131)
+    plt.subplot(141)
     plt.axis("off")
     imgplot = plt.imshow(img)
 
-    plt.subplot(132)
+    plt.subplot(142)
     gd_img = gb_viz*np.minimum(0.25,cam).reshape(224,224,1)
     x = gd_img
     x = np.squeeze(x)
@@ -175,12 +186,21 @@ def visualize(img, cam, filename,gb_viz):
     plt.axis("off")
     imgplot = plt.imshow(x, vmin = 0, vmax = 20)
 
-    cam = cam*-1.0 + 1.0
-    cam_heatmap = cv2.applyColorMap(np.uint8(255*cam), cv2.COLORMAP_JET)
-    plt.subplot(133)
+    cam = (cam*-1.0) + 1.0
+    cam_heatmap = np.array(cv2.applyColorMap(np.uint8(255*cam), cv2.COLORMAP_JET))
+    plt.subplot(143)
     plt.axis("off")
+
     imgplot = plt.imshow(cam_heatmap)
 
-    plt.savefig("output/" + filename, dpi=300)
+    plt.subplot(144)
+    plt.axis("off")
+    
+    cam_heatmap = cam_heatmap/255.0
+
+    fin = (img*0.7) + (cam_heatmap*0.3)
+    imgplot = plt.imshow(fin)
+
+    plt.savefig("output/" + filename, dpi=600)
     plt.close(fig)
 
