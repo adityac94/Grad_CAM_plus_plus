@@ -63,4 +63,3 @@ https://github.com/ry/tensorflow-vgg16
   year={2017}
 }
 ```
-P.S. Currently our work only supports classification probems with CNN, we plan to soon include support for Image Captionin, VQA and other such CNN based architectures.
